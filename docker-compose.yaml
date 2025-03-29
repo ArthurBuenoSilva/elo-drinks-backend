@@ -1,0 +1,60 @@
+services:
+  postgres:
+    image: postgres:17
+    container_name: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: D3vP0stgr3s!
+      POSTGRES_DB: elodrinks_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - docker_network
+    restart: always
+
+  pgadmin:
+    image: dpage/pgadmin4:9.1
+    container_name: pgadmin
+    restart: always
+    environment:
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+      PGADMIN_DEFAULT_EMAIL: 'user@localhost.com'
+      PGADMIN_DEFAULT_PASSWORD: 'D3vP0stgr3s!'
+    ports:
+      - "5051:80"
+    depends_on:
+      - postgres
+    networks:
+      - docker_network
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+
+
+  django:
+    container_name: django
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./code:/code
+    networks:
+      - docker_network
+    depends_on:
+      - postgres
+    command: ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+
+volumes:
+  postgres_data:
+    external: false
+    name: postgres_data
+  pgadmin_data:
+
+
+networks:
+  docker_network:
+    driver: bridge
+    external: false
