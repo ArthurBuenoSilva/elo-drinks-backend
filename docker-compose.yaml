@@ -2,6 +2,7 @@ services:
   postgres:
     image: postgres:17
     container_name: postgres
+    restart: always
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: D3vP0stgr3s!
@@ -12,7 +13,12 @@ services:
       - postgres_data:/var/lib/postgresql/data
     networks:
       - docker_network
-    restart: always
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-U", "postgres" ]
+      interval: 10s
+      retries: 5
+      start_period: 5s
+      timeout: 5s
 
   pgadmin:
     image: dpage/pgadmin4:9.1
@@ -25,12 +31,13 @@ services:
     ports:
       - "5051:80"
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
+
     networks:
       - docker_network
     volumes:
       - pgadmin_data:/var/lib/pgadmin
-
 
   django:
     container_name: django
@@ -44,7 +51,8 @@ services:
     networks:
       - docker_network
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
     command: ["python", "manage.py", "runserver", "0.0.0.0:8000"]
 
 volumes:
