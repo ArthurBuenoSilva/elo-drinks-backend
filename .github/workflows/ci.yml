@@ -41,6 +41,9 @@ jobs:
       - name: Start Docker Containers
         run: inv docker.build --daemon --up
 
+      - name: List Docker Images (Verify Image)
+        run: docker images
+
       - name: List Running Containers
         run: docker ps -a
 
@@ -51,7 +54,8 @@ jobs:
         run: mkdir -p ./docker_images
 
       - name: Save Docker Image as Tarball
-        run: docker save my-docker-image:latest -o ./docker_images/my_docker_image.tar
+        run: |
+          docker save my-docker-image:latest -o ./docker_images/my_docker_image.tar
 
       - name: Cache Docker Image Tarball
         uses: actions/cache@v3
