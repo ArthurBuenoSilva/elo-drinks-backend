@@ -1,0 +1,32 @@
+[tool.black]
+line-length = 120
+target-version = ["py312"]
+exclude = '''
+/(
+  \.git
+ | \.hg
+ | \.mypy_cache
+ | \.tox
+ | .venv
+ | venv
+ | _build
+ | buck-out
+ | static,
+ | static_files,
+ | templates,
+ | media,
+ | build
+ | \.flake8
+ )/
+'''
+
+[tool.isort]
+profile = "black"
+line_length = 120
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "elo_drinks.settings"
+pythonpath = [".", "code"]
+testpaths = ["code"]
+python_files = ["test_*.py", "*_test.py", "test.py", "tests.py"]
+
