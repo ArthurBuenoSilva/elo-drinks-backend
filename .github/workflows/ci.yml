@@ -47,6 +47,9 @@ jobs:
       - name: Run Migrations
         run: inv django.migrate
 
+      - name: Create Docker Images Directory
+        run: mkdir -p ./docker_images
+
       - name: Save Docker Image as Tarball
         run: docker save my-docker-image:latest -o ./docker_images/my_docker_image.tar
 
