@@ -70,10 +70,10 @@ jobs:
         run: docker ps -a
 
       - name: Run Migrations
-        run: docker compose exec -T django invoke django.migrate
+        run: invoke django.migrate
 
       - name: Run Pytest
-        run: docker compose exec -T django invoke test.pytest
+        run: invoke test.pytest
 
   build:
     name: Build & Deploy
