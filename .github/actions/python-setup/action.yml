@@ -1,0 +1,24 @@
+name: 'Python Setup Action'
+description: 'Sets up Python 3.13, caches dependencies, and installs requirements'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Set up Python 3.13
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.13'
+
+    - name: Cache Python Dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-cache-${{ hashFiles('requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-cache-
+
+    - name: Install Dependencies
+      shell: bash
+      run: |
+        pip install --upgrade pip
+        pip install -r requirements.txt
