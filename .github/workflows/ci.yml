@@ -73,20 +73,37 @@ jobs:
       - name: Set up Python
         uses: ./.github/actions/python-setup
 
+      - name: Create Docker Images Directory
+        run: mkdir -p ./docker_images
+
+      - name: Restore Docker Images from Cache
+        uses: actions/cache@v3
+        with:
+          path: ./docker_images/
+          key: ${{ runner.os }}-docker-images-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-docker-images-
+
       - name: Load Docker Images from Cache
         run: |
           if [ -f ./docker_images/elo-drinks-backend-django.tar ]; then
+            echo "Loading Django Docker image..."
             docker load -i ./docker_images/elo-drinks-backend-django.tar
+          else
+            echo "Django Docker image tarball not found!"
           fi
           if [ -f ./docker_images/postgres.tar ]; then
+            echo "Loading Postgres Docker image..."
             docker load -i ./docker_images/postgres.tar
+          else
+            echo "Postgres Docker image tarball not found!"
           fi
 
       - name: List Loaded Docker Images
         run: docker images
 
-#      - name: Start Containers
-#        run: inv docker.run --daemon
+      - name: Start Containers
+        run: inv docker.run --daemon
 
       - name: Run Pytest
         run: inv test.pytest
