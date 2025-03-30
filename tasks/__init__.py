@@ -26,7 +26,7 @@ def run(c: Collection, daemon: bool = False, debug: bool = False, debug_vscode: 
     elif debug_vscode:
         env_vars.append("DEBUG_VSCODE=1" if sys.platform != "win32" else "set DEBUG_VSCODE=1 &&")
 
-    cmd = f"{' '.join(env_vars)} docker-compose -f docker-compose.yaml up {'-d' if daemon else ''}"
+    cmd = f"{' '.join(env_vars)} docker compose -f docker-compose.yaml up {'-d' if daemon else ''}"
     c.run(cmd)
 
 
@@ -36,9 +36,9 @@ def build(c: Collection, daemon: bool = False, up: bool = False):
 
     :param c: The Invoke context, which is used to run the command.
     :param daemon: If True, runs the stack in detached mode.
-    :param up: If True, runs `docker-compose up --build` to build and start the stack.
+    :param up: If True, runs `docker compose up --build` to build and start the stack.
     """
-    cmd = f"docker-compose -f docker-compose.yaml build {' -q' if daemon else ''}"
+    cmd = f"docker compose -f docker-compose.yaml build {' -q' if daemon else ''}"
     c.run(cmd)
 
     if up:
@@ -53,7 +53,7 @@ def down(c: Collection):
 
     :param c: The Invoke context, which is used to run the command.
     """
-    cmd = "docker-compose -f docker-compose.yaml down"
+    cmd = "docker compose -f docker-compose.yaml down"
     c.run(cmd)
 
 
@@ -63,7 +63,7 @@ def kill(c: Collection):
 
     :param c: The Invoke context, which is used to run the command.
     """
-    cmd = "docker-compose -f docker-compose.yaml kill"
+    cmd = "docker compose -f docker-compose.yaml kill"
     c.run(cmd)
 
 
@@ -84,7 +84,7 @@ def fresh_restart(c: Collection, ignore_system_prune: True = True, backup_file: 
         c.run("docker system prune -f")
     else:
         print("🔴 Removing Docker containers, images, volumes and networks...")
-        c.run("docker-compose -p brsc-core-connect down --rmi all -v")
+        c.run("docker compose -p brsc-core-connect down --rmi all -v")
 
     print("🔨 Rebuilding the Docker stack...")
     build(c, daemon=True, up=True)
