@@ -82,8 +82,11 @@ jobs:
             docker load -i ./docker_images/postgres.tar
           fi
 
-      - name: Start Containers
-        run: inv docker.run --daemon
+      - name: List Loaded Docker Images
+        run: docker images
+
+#      - name: Start Containers
+#        run: inv docker.run --daemon
 
       - name: Run Pytest
         run: inv test.pytest
