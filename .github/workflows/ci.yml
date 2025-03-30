@@ -10,7 +10,7 @@ on:
 
 jobs:
   lint:
-    name: Lint Code
+    name: Lint
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
@@ -47,13 +47,18 @@ jobs:
       - name: Run Migrations
         run: inv django.migrate
 
-      - name: Save Docker Image
+      - name: Save Docker Image as Tarball
+        run: docker save my-docker-image:latest -o ./docker_images/my_docker_image.tar
+
+      - name: Cache Docker Image Tarball
         uses: actions/cache@v3
         with:
-          path: ./docker_images/
+          path: ./docker_images/my_docker_image.tar
           key: ${{ runner.os }}-docker-image-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-docker-image-
   test:
-    name: Run Tests
+    name: Tests
     runs-on: ubuntu-latest
     needs: build
     steps:
@@ -63,11 +68,11 @@ jobs:
       - name: Set up Python
         uses: ./.github/actions/python-setup
 
-      - name: Load Docker Image
-        uses: actions/cache@v3
-        with:
-          path: ./docker_images/
-          key: ${{ runner.os }}-docker-image-${{ github.sha }}
+      - name: Load Docker Image from Cache
+        run: |
+          if [ -f ./docker_images/my_docker_image.tar ]; then
+            docker load -i ./docker_images/my_docker_image.tar
+          fi
 
       - name: Run Pytest
         run: inv test.pytest
