@@ -41,9 +41,6 @@ jobs:
       - name: Start Docker Containers
         run: inv docker.build --daemon --up
 
-      - name: List Docker Images (Verify Image)
-        run: docker images
-
       - name: List Running Containers
         run: docker ps -a
 
@@ -55,15 +52,16 @@ jobs:
 
       - name: Save Docker Image as Tarball
         run: |
-          docker save my-docker-image:latest -o ./docker_images/my_docker_image.tar
+          docker save elo-drinks-backend-django:latest -o ./docker_images/elo-drinks-backend-django.tar
+          docker save postgres:17 -o ./docker_images/postgres.tar
 
-      - name: Cache Docker Image Tarball
+      - name: Cache Docker Images
         uses: actions/cache@v3
         with:
-          path: ./docker_images/my_docker_image.tar
-          key: ${{ runner.os }}-docker-image-${{ github.sha }}
+          path: ./docker_images/
+          key: ${{ runner.os }}-docker-images-${{ github.sha }}
           restore-keys: |
-            ${{ runner.os }}-docker-image-
+            ${{ runner.os }}-docker-images-
   test:
     name: Tests
     runs-on: ubuntu-latest
@@ -75,11 +73,17 @@ jobs:
       - name: Set up Python
         uses: ./.github/actions/python-setup
 
-      - name: Load Docker Image from Cache
+      - name: Load Docker Images from Cache
         run: |
-          if [ -f ./docker_images/my_docker_image.tar ]; then
-            docker load -i ./docker_images/my_docker_image.tar
+          if [ -f ./docker_images/elo-drinks-backend-django.tar ]; then
+            docker load -i ./docker_images/elo-drinks-backend-django.tar
           fi
+          if [ -f ./docker_images/postgres.tar ]; then
+            docker load -i ./docker_images/postgres.tar
+          fi
+
+      - name: Start Containers
+        run: inv docker.run --daemon
 
       - name: Run Pytest
         run: inv test.pytest
