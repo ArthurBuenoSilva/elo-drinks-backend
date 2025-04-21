@@ -1,9 +1,6 @@
 name: CI
 
 on:
-  push:
-    branches:
-      - main
   pull_request:
     branches:
       - main
@@ -111,6 +108,9 @@ jobs:
 
       - name: Start Containers
         run: inv docker.run --daemon
+
+      - name: Run Migrations
+        run: inv django.migrate
 
       - name: Run Pytest
         run: inv test.pytest
