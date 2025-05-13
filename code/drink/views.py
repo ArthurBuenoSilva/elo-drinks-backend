@@ -25,3 +25,10 @@ class OrderDrinkViewSet(viewsets.ModelViewSet):
     serializer_class = OrderDrinkSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_class = OrderDrinkFilter
+
+    def perform_destroy(self, instance):
+        order = instance.order
+        instance.delete()
+        drinks_total = sum(od.total_price for od in order.orderdrink_set.all())
+        order.total_price = drinks_total + order.establishment_fee
+        order.save()

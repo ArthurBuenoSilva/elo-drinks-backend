@@ -24,3 +24,8 @@ class Order(models.Model):
     establishment_fee = models.DecimalField(max_digits=10, decimal_places=2)
     payment_status = models.CharField(max_length=10, choices=PAYMENT_STATUS_CHOICES)
     created_at = models.DateTimeField(auto_now_add=True)
+
+    def save(self, *args, **kwargs):
+        drinks_total = sum(od.total_price for od in self.orderdrink_set.all())
+        self.total_price = drinks_total + self.establishment_fee
+        super().save(*args, **kwargs)

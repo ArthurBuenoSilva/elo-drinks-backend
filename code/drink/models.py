@@ -28,3 +28,8 @@ class OrderDrink(models.Model):
     drink = models.ForeignKey(Drink, on_delete=models.CASCADE)
     quantity = models.IntegerField()
     total_price = models.DecimalField(max_digits=10, decimal_places=2)
+
+    def save(self, *args, **kwargs):
+        if self.drink and self.quantity:
+            self.total_price = self.drink.price * self.quantity
+        super().save(*args, **kwargs)
