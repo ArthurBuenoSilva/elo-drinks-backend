@@ -27,6 +27,9 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",
+]
 
 # Application definition
 
@@ -41,12 +44,14 @@ INSTALLED_APPS = [
     "rest_framework_datatables",
     "drf_spectacular",
     "django_filters",
+    "corsheaders",
     "event",
     "drink",
     "order",
 ]
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
