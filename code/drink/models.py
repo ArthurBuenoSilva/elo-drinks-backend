@@ -29,7 +29,10 @@ class OrderDrink(models.Model):
     quantity = models.IntegerField()
     total_price = models.DecimalField(max_digits=10, decimal_places=2)
 
+    def calculate_total_price(self):
+        return self.drink.price * self.quantity
+
     def save(self, *args, **kwargs):
         if self.drink and self.quantity:
-            self.total_price = self.drink.price * self.quantity
+            self.total_price = self.calculate_total_price()
         super().save(*args, **kwargs)
