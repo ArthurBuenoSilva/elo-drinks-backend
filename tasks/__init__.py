@@ -84,7 +84,7 @@ def fresh_restart(c: Collection, ignore_system_prune: True = True, backup_file: 
         c.run("docker system prune -f")
     else:
         print("🔴 Removing Docker containers, images, volumes and networks...")
-        c.run("docker compose -p brsc-core-connect down --rmi all -v")
+        c.run("docker compose -p elo-drinks-backend down --rmi all -v")
 
     print("🔨 Rebuilding the Docker stack...")
     build(c, daemon=True, up=True)
@@ -222,7 +222,7 @@ def pytest(c, file_path=None, keyword=None, marker=None, debug=False, serial=Fal
     :param debug: If True, runs tests with `pudb` for debugging.
     :param serial: If True, runs the tests in a single thread.
     """
-    cmd = ["pytest"]
+    cmd = ["docker", "exec", CONTAINER_NAME, "pytest"]
     if file_path:
         cmd.append(file_path.replace("./code/", ""))
     if keyword:

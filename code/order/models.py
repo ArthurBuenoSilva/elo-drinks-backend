@@ -25,7 +25,15 @@ class Order(models.Model):
     payment_status = models.CharField(max_length=10, choices=PAYMENT_STATUS_CHOICES)
     created_at = models.DateTimeField(auto_now_add=True)
 
+    # def save(self, *args, **kwargs):
+    #     drinks_total = sum(od.total_price for od in self.orderdrink_set.all())
+    #     self.total_price = drinks_total + self.establishment_fee
+    #     super().save(*args, **kwargs)
+
     def save(self, *args, **kwargs):
-        drinks_total = sum(od.total_price for od in self.orderdrink_set.all())
-        self.total_price = drinks_total + self.establishment_fee
-        super().save(*args, **kwargs)
+        super().save(*args, **kwargs)  # salva o objeto primeiro
+
+        if self.pk:  # só acessa o relacionamento se já tiver um ID
+            drinks_total = sum(od.total_price for od in self.orderdrink_set.all())
+            self.total_price = drinks_total + self.establishment_fee
+            super().save(update_fields=["total_price"])
