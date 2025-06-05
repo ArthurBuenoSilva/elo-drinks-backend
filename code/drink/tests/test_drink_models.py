@@ -6,13 +6,11 @@ from .factories import CategoryFactory, DrinkFactory
 
 
 def test_category():
-    """Unit test for Category"""
     mock_category = CategoryFactory.build(name="test_category")
     assert mock_category.name == "test_category"
 
 
 def test_drink():
-    """Unit test for Drink"""
     mock_category = CategoryFactory.build(name="Juice")
 
     mock_drink = DrinkFactory.build(
@@ -30,7 +28,6 @@ def test_drink():
 
 
 def test_calculate_total_price():
-    """Unit test for total price calculation"""
     mock_drink = DrinkFactory.build(price=Decimal("10.00"))
 
     order_drink = OrderDrink(quantity=3)

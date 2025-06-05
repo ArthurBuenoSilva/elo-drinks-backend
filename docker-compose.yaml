@@ -44,6 +44,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    environment:
+      DJANGO_SETTINGS_MODULE: "elo_drinks.settings"
     ports:
       - "8000:8000"
     volumes:
