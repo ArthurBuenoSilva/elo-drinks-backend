@@ -31,9 +31,11 @@ class Order(models.Model):
     #     super().save(*args, **kwargs)
 
     def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)  # salva o objeto primeiro
+        if not self.total_price:
+            self.total_price = self.establishment_fee
+        super().save(*args, **kwargs)
 
-        if self.pk:  # só acessa o relacionamento se já tiver um ID
+        if self.pk:
             drinks_total = sum(od.total_price for od in self.orderdrink_set.all())
             self.total_price = drinks_total + self.establishment_fee
             super().save(update_fields=["total_price"])
